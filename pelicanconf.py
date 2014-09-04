@@ -8,7 +8,7 @@ SITEURL = ''
 
 PATH = 'content'
 
-THEME = 'pelican-themes/BT3-Flat'
+THEME = 'theme'
 
 TIMEZONE = 'America/New_York'
 
