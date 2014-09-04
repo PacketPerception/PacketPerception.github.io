@@ -16,7 +16,7 @@ DEFAULT_LANG = u'en'
 
 #WITH_FUTURE_DATES = False
 TEMPLATE_PAGES = {'blog.html': 'blog.html'}
-STATIC_PATHS = ['images', 'extra/CNAME']
+STATIC_PATHS = ['images', 'extra/CNAME', 'extra/README']
 EXTRA_PATH_METADATA = {'extra/README': {'path': 'README.md'}}
 #EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'}}
 
