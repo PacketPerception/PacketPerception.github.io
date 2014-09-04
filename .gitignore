@@ -1,4 +1,5 @@
 cache
+.ropeproject
 output/*
 *.sw[op]
 *.pyc
