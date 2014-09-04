@@ -53,3 +53,4 @@ POST_LIMIT = 3
 #FAVICON = 'https://dl.dropboxusercontent.com/u/299446/logo.png'
 #ICON = 'https://dl.dropboxusercontent.com/u/299446/logo.png'
 #SHORTCUT_ICON = 'https://dl.dropboxusercontent.com/u/299446/logo.png'
+DISQUS_SITENAME = 'packetperception'
