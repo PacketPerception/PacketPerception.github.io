@@ -13,8 +13,8 @@ Authenticating GitLab to Office 365
 Requires
 ========
 
-* Access to domain you want to authenticate to in https://manage.windowsazure.com/
-* GitLab installed and setup (we're using the omnibus install)
+- Access to domain you want to authenticate to in https://manage.windowsazure.com/
+- GitLab installed and setup (we're using the omnibus install)
     chown -R git:git /opt/gitlab
 
 
@@ -29,11 +29,11 @@ https://www.paydici.com/blog/omniauth-and-windows-azure
 Install omniauth-wsfed
 ===========================
 
-* ``cd /opt/gitlab/embedded/gitlab-rails/``
-* Add ``gem "omniauth-wsfed"`` to Gemfile
+- ``cd /opt/gitlab/embedded/gitlab-rails/``
+- Add ``gem "omniauth-wsfed"`` to Gemfile
 
 .. note:: Need build-essential and cmake on Ubuntu
-* ``sudo -u git -H ../../bin/bundle install --without development test mysql --path vendor/bundle --no-deployment``
+- ``sudo -u git -H ../../bin/bundle install --without development test mysql --path vendor/bundle --no-deployment``
 
 
 Configure omniauth-wsfed
