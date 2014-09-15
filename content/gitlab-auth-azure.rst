@@ -1,7 +1,3 @@
-Title: 
-Date: 2014-14-03 22:45
-Category: git azure Random
-
 Authenticating GitLab to Office 365
 ###################################
 
