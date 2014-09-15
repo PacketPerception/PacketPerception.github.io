@@ -32,7 +32,7 @@ Install omniauth-wsfed
 - ``cd /opt/gitlab/embedded/gitlab-rails/``
 - Add ``gem "omniauth-wsfed"`` to Gemfile
 
-.. note:: Need build-essential and cmake on Ubuntu
+.. note:: Need build-essential, pkg-config and cmake on Ubuntu
 - ``sudo -u git -H ../../bin/bundle install --without development test mysql --path vendor/bundle --no-deployment``
 
 
@@ -40,9 +40,10 @@ Configure omniauth-wsfed
 ========================
 
 .. code:: ruby
-  :issuer_name => "<EntityDescriptor - entityID>",
-  :issuer      => "<EntityDescriptor/RoleDescriptor/fed:SecurityTokenServiceEndpoint/EndpointReference/Address>",
-  :realm       => "<APP ID URL from Azure App configuration>",
-  :reply       => "<REPLY URL from Azure App configuration>",
-  :id_claim    => "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-  :idp_cert    => "<EntityDescriptor/RoleDescriptor/KeyDescriptor/KeyInfo/x509Data/x509Certificate>"
+
+    :issuer_name => "<EntityDescriptor - entityID>",
+    :issuer      => "<EntityDescriptor/RoleDescriptor/fed:SecurityTokenServiceEndpoint/EndpointReference/Address>",
+    :realm       => "<APP ID URL from Azure App configuration>",
+    :reply       => "<REPLY URL from Azure App configuration>",
+    :id_claim    => "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+    :idp_cert    => "<EntityDescriptor/RoleDescriptor/KeyDescriptor/KeyInfo/x509Data/x509Certificate>"
