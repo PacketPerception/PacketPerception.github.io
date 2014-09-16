@@ -18,7 +18,7 @@ should easily adapt to manual installations)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
-&lt;p class="last"&gt;Make sure the permissions were set correctly for &lt;em&gt;/opt/gitlab&lt;/em&gt;; &lt;tt class="docutils literal"&gt;chown &lt;span class="pre"&gt;-R&lt;/span&gt; git:git /opt/gitlab&lt;/tt&gt;&lt;/p&gt;
+&lt;p class="last"&gt;Make sure the permissions were set correctly for &lt;em&gt;/opt/gitlab&lt;/em&gt;  &lt;tt class="docutils literal"&gt;chown &lt;span class="pre"&gt;-R&lt;/span&gt; git:git /opt/gitlab&lt;/tt&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="section" id="create-a-new-application-in-azure"&gt;
