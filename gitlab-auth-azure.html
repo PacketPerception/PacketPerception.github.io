@@ -90,31 +90,133 @@
         <div id="blog_main_area" class="left col-md-9" count=2>
   <!-- article title -->
   <header>
-      <h1>Site Up</h1>
+      <h1>Authenticating GitLab to Office 365</h1>
     <small class="fsize13">
             <a href="http://packetperception.org/category/random.html" rel="tag tooltip" class="label label-default light" data-placement="right" data-original-title="2 articles in this category"><i class="fa fa-dot-circle-o"></i> Random</a>
-      <a href="http://packetperception.org/site-up.html#disqus_thread" class="scrollTo label label-default light" data-disqus-identifier="site-up.html"><i class="fa fa-comment-o"></i> ?? Comments</a>
-      <span class="label label-default light">Wed 03 September 2014</span> 
+      <a href="http://packetperception.org/gitlab-auth-azure.html#disqus_thread" class="scrollTo label label-default light" data-disqus-identifier="gitlab-auth-azure.html"><i class="fa fa-comment-o"></i> ?? Comments</a>
+      <span class="label label-default light">Mon 15 September 2014</span> 
     </small>
   </header>
 
   <article class='content'>
-    <p>Packet Perception has moved to github pages</p>
+    <p>Quick and dirty guide on configuring <a class="reference external" href="https://about.gitlab.com/">GitLab</a> to authenticate against
+Microsoft's Office 365. Office 365 will create an Azure Active Directory server to manage users,
+and we can use that AD server to authenticate using OAUTH2.0.</p>
+<div class="section" id="requires">
+<h2>Requires</h2>
+<ul class="simple">
+<li>Access to domain you want to authenticate to in the Azure Management Portal
+(<a class="reference external" href="https://manage.windowsazure.com/">https://manage.windowsazure.com/</a>)</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can use your 30-day trial to set this up without paying for Azure</p>
+</div>
+<ul class="simple">
+<li>GitLab installed and setup (we're specifically using the omnibus install for this guide, but
+should easily adapt to manual installations)</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure the permissions were set correctly for <em>/opt/gitlab</em>; <tt class="docutils literal">chown <span class="pre">-R</span> git:git /opt/gitlab</tt></p>
+</div>
+</div>
+<div class="section" id="create-a-new-application-in-azure">
+<h2>Create a new Application in Azure</h2>
+<ul class="simple">
+<li>Log into <a class="reference external" href="https://manage.windowsazure.com/">Azure Management Portal</a></li>
+<li>Go to <em>Active Directory</em> -&gt; <em>Applications</em> and click <em>ADD</em> at the bottom</li>
+<li>Select <em>Add an application my organization is developing</em></li>
+<li>Name (GitLab), select <em>WEB APPLICATION AND/OR WEB API</em></li>
+<li>Enter the URL for your GitLab installation (e.g. <a class="reference external" href="https://mygitlab.mycorp.org/">https://mygitlab.mycorp.org/</a>)</li>
+<li>Enter a Microsoft endpoint URL for APP ID (e.g. <a class="reference external" href="https://mycorp.onmicrosoft.com/mygitlab">https://mycorp.onmicrosoft.com/mygitlab</a>)
+# doesn't really matter, we wont use it, just have to be unique</li>
+<li>Go to the <em>Configuration</em> page for the Application you just added</li>
+<li>Take note of the <em>CLIENT ID</em> that will be used as the <em>client_id</em> below</li>
+<li>Create a new key by selecting a duration. <em>Make sure to copy down the value generated immediately
+as you will not be able to access it after leaving the page</em>. This key will be the
+<em>client_secret</em> below</li>
+<li>Ensure that under <em>permissions to other applications</em>, <em>Windows Azure Active Directory</em> as the
+<em>Enable sign-on and read users' profiles</em> permission selected</li>
+<li>Add a <em>REPLY URL</em> in the form of <em>https://mygitlab.mycorp.org/users/auth/azure_oauth2/callback</em>,
+replacing <em>mygitlab.mycorp.org</em> with the correct value</li>
+<li>Save your changes, then click the <em>VIEW ENDPOINTS</em> button at the bottom</li>
+<li>Note the OAUTH2.0 endpoints, they will look like
+<em>https://login.windows.net/&lt;TENANT ID&gt;/oauth2/token?api-version=1.0</em>. Copy down the value you
+have for the <em>&lt;TENANT ID&gt;</em> part of the URL, this will be used below</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some useful links for setting this up
+<a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api">http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api</a>
+<a class="reference external" href="https://www.paydici.com/blog/omniauth-and-windows-azure">https://www.paydici.com/blog/omniauth-and-windows-azure</a></p>
+</div>
+</div>
+<div class="section" id="install-omniauth-azure-auth2">
+<h2>Install omniauth-azure-auth2</h2>
+<ul class="simple">
+<li><tt class="docutils literal">cd <span class="pre">/opt/gitlab/embedded/gitlab-rails/</span></tt></li>
+<li>Add <tt class="docutils literal">gem <span class="pre">&quot;omniauth-azure-auth2&quot;</span></tt> to Gemfile</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Need build-essential, pkg-config and cmake on Ubuntu</p>
+</div>
+<ul class="simple">
+<li><tt class="docutils literal">sudo <span class="pre">-u</span> git <span class="pre">-H</span> <span class="pre">../../bin/bundle</span> install <span class="pre">--without</span> development test mysql <span class="pre">--path</span> vendor/bundle <span class="pre">--no-deployment</span></tt></li>
+</ul>
+</div>
+<div class="section" id="configure-omniauth-azure-auth2">
+<h2>Configure omniauth-azure-auth2</h2>
+<p>Edit <em>/etc/gitlab/gitlab.rb</em>, adding the following:</p>
+<pre class="code yaml literal-block">
+<span class="l-Scalar-Plain">gitlab_rails['omniauth_enabled'] = true</span>
+<span class="l-Scalar-Plain">gitlab_rails['omniauth_allow_single_sign_on'] = true</span>
+<span class="l-Scalar-Plain">gitlab_rails['omniauth_providers'] = [</span>
+  <span class="l-Scalar-Plain">{ name</span><span class="p-Indicator">:</span> <span class="s">&quot;azure_oauth2&quot;</span><span class="err">,</span>
+    <span class="l-Scalar-Plain">args</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span>
+      <span class="nv">client_id</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;CLIENT</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">newly</span><span class="nv"> </span><span class="s">configured</span><span class="nv"> </span><span class="s">app&gt;&quot;</span><span class="p-Indicator">,</span>
+      <span class="nv">client_secret</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;Key</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">generated&gt;&quot;</span><span class="p-Indicator">,</span>
+      <span class="nv">tenant_id</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;TENANT</span><span class="nv"> </span><span class="s">ID</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">found</span><span class="nv"> </span><span class="s">above&gt;&quot;</span>
+    <span class="p-Indicator">}</span>
+<span class="-Error">  </span><span class="err">}</span>
+<span class="err">]</span>
+</pre>
+</div>
+<div class="section" id="reconfigure-gitlab">
+<h2>Reconfigure gitlab</h2>
+<p><tt class="docutils literal"><span class="pre">gitlab-ctl</span> reconfigure</tt></p>
+</div>
+<div class="section" id="log-in">
+<h2>Log in</h2>
+<p>You should now have a <em>Sign in with: Azure Oauth2</em> button on the login screen. If you're already
+logged into the Office 365 portal, you can click this for SSO. Otherwise, you can log in by
+specifying <em>user&#64;mycorp.org</em> and the Office 365 password and clicking <em>Sign in</em>. This will
+automatically create a user account if the authentication was successful. The user's name will
+probably have to be updated which can be done by the user after they've logged in by editing their
+profile.</p>
+</div>
+
   </article>
 
   <div class="divider"><!-- lines divider --></div>
 
   <!-- SOCIAL -->
 <p class="socials">
-    <a href="http://www.facebook.com/sharer/sharer.php?u=http://packetperception.org/site-up.html" class="rounded-icon social fa fa-facebook" target="_blank" title="Share on Facebook"><!-- facebook --></a>
-    <a href="http://twitter.com/home?status=http://packetperception.org/site-up.html" class="rounded-icon social fa fa-twitter" target="_blank" title="Share on Twitter"><!-- twitter --></a>
-    <a href="https://plus.google.com/share?url=http://packetperception.org/site-up.html" class="rounded-icon social fa fa-google-plus" target="_blank" title="Share on Google+"><!-- google plus --></a>
-    <a href="http://pinterest.com/pin/create/link/?url==http://packetperception.org/site-up.html" class="rounded-icon social fa fa-pinterest"  target="_blank" title="Share on Pinterest"><!-- pinterest --></a>
-    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http://packetperception.org/site-up.html&title=Site Up&summary=&source=" class="rounded-icon social fa fa-linkedin" target="_blank" title="Share on Linkedin"><!-- linkedin --></a>
+    <a href="http://www.facebook.com/sharer/sharer.php?u=http://packetperception.org/gitlab-auth-azure.html" class="rounded-icon social fa fa-facebook" target="_blank" title="Share on Facebook"><!-- facebook --></a>
+    <a href="http://twitter.com/home?status=http://packetperception.org/gitlab-auth-azure.html" class="rounded-icon social fa fa-twitter" target="_blank" title="Share on Twitter"><!-- twitter --></a>
+    <a href="https://plus.google.com/share?url=http://packetperception.org/gitlab-auth-azure.html" class="rounded-icon social fa fa-google-plus" target="_blank" title="Share on Google+"><!-- google plus --></a>
+    <a href="http://pinterest.com/pin/create/link/?url==http://packetperception.org/gitlab-auth-azure.html" class="rounded-icon social fa fa-pinterest"  target="_blank" title="Share on Pinterest"><!-- pinterest --></a>
+    <a href="http://www.linkedin.com/shareArticle?mini=true&url=http://packetperception.org/gitlab-auth-azure.html&title=Authenticating GitLab to Office 365&summary=&source=" class="rounded-icon social fa fa-linkedin" target="_blank" title="Share on Linkedin"><!-- linkedin --></a>
 </p>  
 
   <!-- TAGS -->
   <p class="fsize16"> Tags:
+        <a href="/tag/azure.html" rel="tooltip" class="label label-default light" data-placement="right" data-original-title="1 article with this tag"><i class="fa fa-tags"></i> azure</a>
+        <a href="/tag/office-365.html" rel="tooltip" class="label label-default light" data-placement="right" data-original-title="1 article with this tag"><i class="fa fa-tags"></i> office 365</a>
+        <a href="/tag/git.html" rel="tooltip" class="label label-default light" data-placement="right" data-original-title="1 article with this tag"><i class="fa fa-tags"></i> git</a>
+        <a href="/tag/gitlab.html" rel="tooltip" class="label label-default light" data-placement="right" data-original-title="1 article with this tag"><i class="fa fa-tags"></i> gitlab</a>
+        <a href="/tag/oauth.html" rel="tooltip" class="label label-default light" data-placement="right" data-original-title="1 article with this tag"><i class="fa fa-tags"></i> oauth</a>
   </p>
 
   <hr /><!-- divider -->
@@ -123,9 +225,9 @@
       <div id="disqus_thread"></div>
       <script type="text/javascript">
         var disqus_shortname = 'packetperception';
-        var disqus_identifier = "site-up.html";
-        var disqus_title = "Site Up";
-        var disqus_url = "http://packetperception.org/site-up.html";
+        var disqus_identifier = "gitlab-auth-azure.html";
+        var disqus_title = "Authenticating GitLab to Office 365";
+        var disqus_url = "http://packetperception.org/gitlab-auth-azure.html";
         (function() {
           var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
           dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';

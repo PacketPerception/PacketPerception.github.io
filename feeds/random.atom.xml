@@ -1,2 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Packet Perception</title><link href="http://packetperception.org/" rel="alternate"></link><link href="http://packetperception.org/feeds/random.atom.xml" rel="self"></link><id>http://packetperception.org/</id><updated>2014-09-03T22:45:00-04:00</updated><entry><title>Site Up</title><link href="http://packetperception.org/site-up.html" rel="alternate"></link><updated>2014-09-03T22:45:00-04:00</updated><author><name>Brian Knobbs</name></author><id>tag:packetperception.org,2014-09-03:site-up.html</id><summary type="html">&lt;p&gt;Packet Perception has moved to github pages&lt;/p&gt;</summary></entry></feed>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Packet Perception</title><link href="http://packetperception.org/" rel="alternate"></link><link href="http://packetperception.org/feeds/random.atom.xml" rel="self"></link><id>http://packetperception.org/</id><updated>2014-09-15T21:00:00-04:00</updated><entry><title>Authenticating GitLab to Office 365</title><link href="http://packetperception.org/gitlab-auth-azure.html" rel="alternate"></link><updated>2014-09-15T21:00:00-04:00</updated><author><name>Brian Knobbs</name></author><id>tag:packetperception.org,2014-09-15:gitlab-auth-azure.html</id><summary type="html">&lt;p&gt;Quick and dirty guide on configuring &lt;a class="reference external" href="https://about.gitlab.com/"&gt;GitLab&lt;/a&gt; to authenticate against
+Microsoft's Office 365. Office 365 will create an Azure Active Directory server to manage users,
+and we can use that AD server to authenticate using OAUTH2.0.&lt;/p&gt;
+&lt;div class="section" id="requires"&gt;
+&lt;h2&gt;Requires&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Access to domain you want to authenticate to in the Azure Management Portal
+(&lt;a class="reference external" href="https://manage.windowsazure.com/"&gt;https://manage.windowsazure.com/&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;You can use your 30-day trial to set this up without paying for Azure&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;GitLab installed and setup (we're specifically using the omnibus install for this guide, but
+should easily adapt to manual installations)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;Make sure the permissions were set correctly for &lt;em&gt;/opt/gitlab&lt;/em&gt;; &lt;tt class="docutils literal"&gt;chown &lt;span class="pre"&gt;-R&lt;/span&gt; git:git /opt/gitlab&lt;/tt&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="create-a-new-application-in-azure"&gt;
+&lt;h2&gt;Create a new Application in Azure&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Log into &lt;a class="reference external" href="https://manage.windowsazure.com/"&gt;Azure Management Portal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Go to &lt;em&gt;Active Directory&lt;/em&gt; -&amp;gt; &lt;em&gt;Applications&lt;/em&gt; and click &lt;em&gt;ADD&lt;/em&gt; at the bottom&lt;/li&gt;
+&lt;li&gt;Select &lt;em&gt;Add an application my organization is developing&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Name (GitLab), select &lt;em&gt;WEB APPLICATION AND/OR WEB API&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Enter the URL for your GitLab installation (e.g. &lt;a class="reference external" href="https://mygitlab.mycorp.org/"&gt;https://mygitlab.mycorp.org/&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Enter a Microsoft endpoint URL for APP ID (e.g. &lt;a class="reference external" href="https://mycorp.onmicrosoft.com/mygitlab"&gt;https://mycorp.onmicrosoft.com/mygitlab&lt;/a&gt;)
+# doesn't really matter, we wont use it, just have to be unique&lt;/li&gt;
+&lt;li&gt;Go to the &lt;em&gt;Configuration&lt;/em&gt; page for the Application you just added&lt;/li&gt;
+&lt;li&gt;Take note of the &lt;em&gt;CLIENT ID&lt;/em&gt; that will be used as the &lt;em&gt;client_id&lt;/em&gt; below&lt;/li&gt;
+&lt;li&gt;Create a new key by selecting a duration. &lt;em&gt;Make sure to copy down the value generated immediately
+as you will not be able to access it after leaving the page&lt;/em&gt;. This key will be the
+&lt;em&gt;client_secret&lt;/em&gt; below&lt;/li&gt;
+&lt;li&gt;Ensure that under &lt;em&gt;permissions to other applications&lt;/em&gt;, &lt;em&gt;Windows Azure Active Directory&lt;/em&gt; as the
+&lt;em&gt;Enable sign-on and read users' profiles&lt;/em&gt; permission selected&lt;/li&gt;
+&lt;li&gt;Add a &lt;em&gt;REPLY URL&lt;/em&gt; in the form of &lt;em&gt;https://mygitlab.mycorp.org/users/auth/azure_oauth2/callback&lt;/em&gt;,
+replacing &lt;em&gt;mygitlab.mycorp.org&lt;/em&gt; with the correct value&lt;/li&gt;
+&lt;li&gt;Save your changes, then click the &lt;em&gt;VIEW ENDPOINTS&lt;/em&gt; button at the bottom&lt;/li&gt;
+&lt;li&gt;Note the OAUTH2.0 endpoints, they will look like
+&lt;em&gt;https://login.windows.net/&amp;lt;TENANT ID&amp;gt;/oauth2/token?api-version=1.0&lt;/em&gt;. Copy down the value you
+have for the &lt;em&gt;&amp;lt;TENANT ID&amp;gt;&lt;/em&gt; part of the URL, this will be used below&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;Some useful links for setting this up
+&lt;a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api"&gt;http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api&lt;/a&gt;
+&lt;a class="reference external" href="https://www.paydici.com/blog/omniauth-and-windows-azure"&gt;https://www.paydici.com/blog/omniauth-and-windows-azure&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="install-omniauth-azure-auth2"&gt;
+&lt;h2&gt;Install omniauth-azure-auth2&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;cd &lt;span class="pre"&gt;/opt/gitlab/embedded/gitlab-rails/&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Add &lt;tt class="docutils literal"&gt;gem &lt;span class="pre"&gt;&amp;quot;omniauth-azure-auth2&amp;quot;&lt;/span&gt;&lt;/tt&gt; to Gemfile&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="note"&gt;
+&lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
+&lt;p class="last"&gt;Need build-essential, pkg-config and cmake on Ubuntu&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;sudo &lt;span class="pre"&gt;-u&lt;/span&gt; git &lt;span class="pre"&gt;-H&lt;/span&gt; &lt;span class="pre"&gt;../../bin/bundle&lt;/span&gt; install &lt;span class="pre"&gt;--without&lt;/span&gt; development test mysql &lt;span class="pre"&gt;--path&lt;/span&gt; vendor/bundle &lt;span class="pre"&gt;--no-deployment&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="section" id="configure-omniauth-azure-auth2"&gt;
+&lt;h2&gt;Configure omniauth-azure-auth2&lt;/h2&gt;
+&lt;p&gt;Edit &lt;em&gt;/etc/gitlab/gitlab.rb&lt;/em&gt;, adding the following:&lt;/p&gt;
+&lt;pre class="code yaml literal-block"&gt;
+&lt;span class="l-Scalar-Plain"&gt;gitlab_rails['omniauth_enabled'] = true&lt;/span&gt;
+&lt;span class="l-Scalar-Plain"&gt;gitlab_rails['omniauth_allow_single_sign_on'] = true&lt;/span&gt;
+&lt;span class="l-Scalar-Plain"&gt;gitlab_rails['omniauth_providers'] = [&lt;/span&gt;
+  &lt;span class="l-Scalar-Plain"&gt;{ name&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;azure_oauth2&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+    &lt;span class="l-Scalar-Plain"&gt;args&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt; &lt;span class="p-Indicator"&gt;{&lt;/span&gt;
+      &lt;span class="nv"&gt;client_id&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&amp;lt;CLIENT&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;ID&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;from&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;the&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;newly&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;configured&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;app&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class="p-Indicator"&gt;,&lt;/span&gt;
+      &lt;span class="nv"&gt;client_secret&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&amp;lt;Key&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;value&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;that&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;you&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;generated&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class="p-Indicator"&gt;,&lt;/span&gt;
+      &lt;span class="nv"&gt;tenant_id&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&amp;lt;TENANT&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;ID&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;that&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;you&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;found&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;above&amp;gt;&amp;quot;&lt;/span&gt;
+    &lt;span class="p-Indicator"&gt;}&lt;/span&gt;
+&lt;span class="-Error"&gt;  &lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;
+&lt;span class="err"&gt;]&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class="section" id="reconfigure-gitlab"&gt;
+&lt;h2&gt;Reconfigure gitlab&lt;/h2&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;gitlab-ctl&lt;/span&gt; reconfigure&lt;/tt&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="log-in"&gt;
+&lt;h2&gt;Log in&lt;/h2&gt;
+&lt;p&gt;You should now have a &lt;em&gt;Sign in with: Azure Oauth2&lt;/em&gt; button on the login screen. If you're already
+logged into the Office 365 portal, you can click this for SSO. Otherwise, you can log in by
+specifying &lt;em&gt;user&amp;#64;mycorp.org&lt;/em&gt; and the Office 365 password and clicking &lt;em&gt;Sign in&lt;/em&gt;. This will
+automatically create a user account if the authentication was successful. The user's name will
+probably have to be updated which can be done by the user after they've logged in by editing their
+profile.&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="git"></category><category term="azure"></category><category term="gitlab"></category><category term="office 365"></category><category term="oauth"></category></entry><entry><title>Site Up</title><link href="http://packetperception.org/site-up.html" rel="alternate"></link><updated>2014-09-03T22:45:00-04:00</updated><author><name>Brian Knobbs</name></author><id>tag:packetperception.org,2014-09-03:site-up.html</id><summary type="html">&lt;p&gt;Packet Perception has moved to github pages&lt;/p&gt;</summary></entry></feed>
