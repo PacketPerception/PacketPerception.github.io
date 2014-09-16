@@ -8,7 +8,7 @@ and we can use that AD server to authenticate using OAUTH2.0.&lt;/p&gt;
 &lt;li&gt;Access to domain you want to authenticate to in the Azure Management Portal
 (&lt;a class="reference external" href="https://manage.windowsazure.com/"&gt;https://manage.windowsazure.com/&lt;/a&gt;)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class="note"&gt;
+&lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
 &lt;p class="last"&gt;You can use your 30-day trial to set this up without paying for Azure&lt;/p&gt;
 &lt;/div&gt;
@@ -16,7 +16,7 @@ and we can use that AD server to authenticate using OAUTH2.0.&lt;/p&gt;
 &lt;li&gt;GitLab installed and setup (we're specifically using the omnibus install for this guide, but
 should easily adapt to manual installations)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class="note"&gt;
+&lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
 &lt;p class="last"&gt;Make sure the permissions were set correctly for &lt;em&gt;/opt/gitlab&lt;/em&gt;; &lt;tt class="docutils literal"&gt;chown &lt;span class="pre"&gt;-R&lt;/span&gt; git:git /opt/gitlab&lt;/tt&gt;&lt;/p&gt;
 &lt;/div&gt;
@@ -45,10 +45,10 @@ replacing &lt;em&gt;mygitlab.mycorp.org&lt;/em&gt; with the correct value&lt;/li
 &lt;em&gt;https://login.windows.net/&amp;lt;TENANT ID&amp;gt;/oauth2/token?api-version=1.0&lt;/em&gt;. Copy down the value you
 have for the &lt;em&gt;&amp;lt;TENANT ID&amp;gt;&lt;/em&gt; part of the URL, this will be used below&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class="note"&gt;
+&lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
-&lt;p class="last"&gt;Some useful links for setting this up
-&lt;a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api"&gt;http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api&lt;/a&gt;
+&lt;p&gt;Some useful links for setting this up&lt;/p&gt;
+&lt;p class="last"&gt;&lt;a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api"&gt;http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api&lt;/a&gt;
 &lt;a class="reference external" href="https://www.paydici.com/blog/omniauth-and-windows-azure"&gt;https://www.paydici.com/blog/omniauth-and-windows-azure&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -58,7 +58,7 @@ have for the &lt;em&gt;&amp;lt;TENANT ID&amp;gt;&lt;/em&gt; part of the URL, thi
 &lt;li&gt;&lt;tt class="docutils literal"&gt;cd &lt;span class="pre"&gt;/opt/gitlab/embedded/gitlab-rails/&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;Add &lt;tt class="docutils literal"&gt;gem &lt;span class="pre"&gt;&amp;quot;omniauth-azure-auth2&amp;quot;&lt;/span&gt;&lt;/tt&gt; to Gemfile&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class="note"&gt;
+&lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
 &lt;p class="last"&gt;Need build-essential, pkg-config and cmake on Ubuntu&lt;/p&gt;
 &lt;/div&gt;

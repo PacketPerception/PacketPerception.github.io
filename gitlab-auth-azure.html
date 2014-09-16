@@ -19,15 +19,14 @@
 
 
 <!-- CORE CSS FRAMEWORK -->
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 <!-- CSS TEMPLATE -->
 <link href="http://packetperception.org/theme/css/reset.css" rel="stylesheet" type="text/css" />
 <link href="http://packetperception.org/theme/css/framework.css" rel="stylesheet" type="text/css" />
-<link href="http://packetperception.org/theme/css/typography.css" rel="stylesheet" type="text/css" />
+<!--<link href="http://packetperception.org/theme/css/typography.css" rel="stylesheet" type="text/css" />-->
 <link href="http://packetperception.org/theme/css/layout.css" rel="stylesheet" type="text/css" />
-
 <link href="http://packetperception.org/theme/css/blog.css" rel="stylesheet" type="text/css" />
 
 <!-- ICONS -->
@@ -108,7 +107,7 @@ and we can use that AD server to authenticate using OAUTH2.0.</p>
 <li>Access to domain you want to authenticate to in the Azure Management Portal
 (<a class="reference external" href="https://manage.windowsazure.com/">https://manage.windowsazure.com/</a>)</li>
 </ul>
-<div class="note">
+<div class="bs-callout bs-callout-info note">
 <p class="first admonition-title">Note</p>
 <p class="last">You can use your 30-day trial to set this up without paying for Azure</p>
 </div>
@@ -116,7 +115,7 @@ and we can use that AD server to authenticate using OAUTH2.0.</p>
 <li>GitLab installed and setup (we're specifically using the omnibus install for this guide, but
 should easily adapt to manual installations)</li>
 </ul>
-<div class="note">
+<div class="bs-callout bs-callout-info note">
 <p class="first admonition-title">Note</p>
 <p class="last">Make sure the permissions were set correctly for <em>/opt/gitlab</em>; <tt class="docutils literal">chown <span class="pre">-R</span> git:git /opt/gitlab</tt></p>
 </div>
@@ -145,10 +144,10 @@ replacing <em>mygitlab.mycorp.org</em> with the correct value</li>
 <em>https://login.windows.net/&lt;TENANT ID&gt;/oauth2/token?api-version=1.0</em>. Copy down the value you
 have for the <em>&lt;TENANT ID&gt;</em> part of the URL, this will be used below</li>
 </ul>
-<div class="note">
+<div class="bs-callout bs-callout-info note">
 <p class="first admonition-title">Note</p>
-<p class="last">Some useful links for setting this up
-<a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api">http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api</a>
+<p>Some useful links for setting this up</p>
+<p class="last"><a class="reference external" href="http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api">http://stackoverflow.com/questions/22666233/get-started-with-office-365-rest-api</a>
 <a class="reference external" href="https://www.paydici.com/blog/omniauth-and-windows-azure">https://www.paydici.com/blog/omniauth-and-windows-azure</a></p>
 </div>
 </div>
@@ -158,7 +157,7 @@ have for the <em>&lt;TENANT ID&gt;</em> part of the URL, this will be used below
 <li><tt class="docutils literal">cd <span class="pre">/opt/gitlab/embedded/gitlab-rails/</span></tt></li>
 <li>Add <tt class="docutils literal">gem <span class="pre">&quot;omniauth-azure-auth2&quot;</span></tt> to Gemfile</li>
 </ul>
-<div class="note">
+<div class="bs-callout bs-callout-info note">
 <p class="first admonition-title">Note</p>
 <p class="last">Need build-essential, pkg-config and cmake on Ubuntu</p>
 </div>
