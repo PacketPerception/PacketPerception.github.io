@@ -1,3 +1,6 @@
+#blog_main_area {
+  padding-top: 30px;
+}
 #blog {
   text-align:left;
   border:0;
@@ -63,6 +66,42 @@
 }
 #quick-blog .quick-item .btn, #blog .item .btn, #blog .item .btn:hover {
   border:#ccc 1px solid !important;
+}
+/* Side notes for calling out things
+ * -------------------------------------------------- */
+ 
+/* Base styles (regardless of theme) */
+.bs-callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+.bs-callout .first {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #5bc0de;
+  font-size: 18px;
+}
+.bs-callout p:last-child {
+  margin-bottom: 0;
+}
+.bs-callout code,
+.bs-callout .highlight {
+  background-color: #fff;
+}
+ 
+/* Themes for different contexts */
+.bs-callout-danger {
+  background-color: #fcf2f2;
+  border-color: #dFb5b4;
+}
+.bs-callout-warning {
+  background-color: #fefbed;
+  border-color: #f1e7bc;
+}
+.bs-callout-info {
+  background-color: #f0f7fd;
+  border-color: #d0e3f0;
 }
 /* onepage home */
  #quick-blog div.quick-hover {
