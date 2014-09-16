@@ -29,7 +29,8 @@ CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
 # Blogroll
-LINKS = (('Pelican', 'http://getpelican.com/'),)
+LINKS = (('GitHub', 'http://github.com/PacketPerception'),
+         ('REDLattice', 'http://redlattice.com'))
 
 # Social widget
 SOCIAL = (('github', 'https://github.com/PacketPerception'),
