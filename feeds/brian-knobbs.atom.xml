@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Packet Perception</title><link href="http://packetperception.org/" rel="alternate"></link><link href="http://packetperception.org/feeds/brian-knobbs.atom.xml" rel="self"></link><id>http://packetperception.org/</id><updated>2014-09-15T21:00:00-04:00</updated><entry><title>Authenticating GitLab to Office 365</title><link href="http://packetperception.org/gitlab-auth-azure.html" rel="alternate"></link><updated>2014-09-15T21:00:00-04:00</updated><author><name>Brian Knobbs</name></author><id>tag:packetperception.org,2014-09-15:gitlab-auth-azure.html</id><summary type="html">&lt;p&gt;Quick and dirty guide on configuring &lt;a class="reference external" href="https://about.gitlab.com/"&gt;GitLab&lt;/a&gt; to authenticate against
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Packet Perception</title><link href="http://packetperception.org/" rel="alternate"></link><link href="http://packetperception.org/feeds/brian-knobbs.atom.xml" rel="self"></link><id>http://packetperception.org/</id><updated>2014-10-27T21:00:00-04:00</updated><entry><title>Authenticating GitLab to Office 365</title><link href="http://packetperception.org/gitlab-auth-azure.html" rel="alternate"></link><updated>2014-10-27T21:00:00-04:00</updated><author><name>Brian Knobbs</name></author><id>tag:packetperception.org,2014-09-15:gitlab-auth-azure.html</id><summary type="html">&lt;p&gt;Quick and dirty guide on configuring &lt;a class="reference external" href="https://about.gitlab.com/"&gt;GitLab&lt;/a&gt; to authenticate against
 Microsoft's Office 365. Office 365 will create an Azure Active Directory server to manage users,
 and we can use that AD server to authenticate using OAUTH2.0.&lt;/p&gt;
 &lt;div class="section" id="requires"&gt;
@@ -55,8 +55,8 @@ have for the &lt;em&gt;&amp;lt;TENANT ID&amp;gt;&lt;/em&gt; part of the URL, thi
 &lt;div class="section" id="install-omniauth-azure-auth2"&gt;
 &lt;h2&gt;Install omniauth-azure-auth2&lt;/h2&gt;
 &lt;ul class="simple"&gt;
-&lt;li&gt;&lt;tt class="docutils literal"&gt;cd &lt;span class="pre"&gt;/opt/gitlab/embedded/gitlab-rails/&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
-&lt;li&gt;Add &lt;tt class="docutils literal"&gt;gem &lt;span class="pre"&gt;&amp;quot;omniauth-azure-auth2&amp;quot;&lt;/span&gt;&lt;/tt&gt; to Gemfile&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;cd &lt;span class="pre"&gt;/opt/gitlab/embedded/service/gitlab-rails/&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Add &lt;tt class="docutils literal"&gt;gem &lt;span class="pre"&gt;'omniauth-azure-oauth2'&lt;/span&gt;&lt;/tt&gt; to Gemfile after &lt;tt class="docutils literal"&gt;gem &lt;span class="pre"&gt;'omniauth-shibboleth'&lt;/span&gt;&lt;/tt&gt; (near line 31)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class="bs-callout bs-callout-info note"&gt;
 &lt;p class="first admonition-title"&gt;Note&lt;/p&gt;
