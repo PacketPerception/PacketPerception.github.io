@@ -3,7 +3,7 @@ Authenticating GitLab to Office 365
 ===================================
 
 :date: 2014-09-15 21:00
-:modified: 2014-09-15 21:00
+:modified: 2014-10-27 21:00
 :tags: git, azure, gitlab, office 365, oauth
 :category: Random
 :slug: gitlab-auth-azure
@@ -33,7 +33,7 @@ Requires
 .. note:: 
     :class: bs-callout bs-callout-info
 
-    Make sure the permissions were set correctly for */opt/gitlab*; ``chown -R git:git /opt/gitlab``
+    Make sure the permissions were set correctly for */opt/gitlab*  ``chown -R git:git /opt/gitlab``
 
 
 Create a new Application in Azure
@@ -72,10 +72,10 @@ Create a new Application in Azure
 Install omniauth-azure-auth2
 ----------------------------
 
-- ``cd /opt/gitlab/embedded/gitlab-rails/``
-- Add ``gem "omniauth-azure-auth2"`` to Gemfile
+- ``cd /opt/gitlab/embedded/service/gitlab-rails/``
+- Add ``gem 'omniauth-azure-oauth2'`` to Gemfile after ``gem 'omniauth-shibboleth'`` (near line 31)
 
-.. note:: 
+.. note::
     :class: bs-callout bs-callout-info
 
     Need build-essential, pkg-config and cmake on Ubuntu
